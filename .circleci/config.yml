@@ -19,3 +19,4 @@ jobs:
           name: Crear una VPC en AWS
           command: |
             aws ec2 create-vpc --cidr-block 10.0.0.0/16 --region $AWS_REGION
+            #nueva
