@@ -32,4 +32,7 @@ workflows:
   create-vpc-workflow:
     jobs:
       - create-vpc:
-          context: region
+          context: 
+            - region
+            - idaws
+            - clavaws
