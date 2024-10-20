@@ -8,7 +8,6 @@ executors:
 jobs:
   create-vpc:
     executor: default
-    context: región 
     steps:
       - checkout
       - run:
