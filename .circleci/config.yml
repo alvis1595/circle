@@ -1,0 +1,21 @@
+version: 2.1
+
+executors:
+  default:
+    docker:
+      - image: circleci/python:3.8
+
+jobs:
+  create-vpc:
+    executor: default
+    steps:
+      - checkout
+      - run:
+          name: Instalar AWS CLI
+          command: |
+            sudo apt-get update
+            sudo apt-get install -y awscli
+      - run:
+          name: Crear una VPC en AWS
+          command: |
+            aws ec2 create-vpc --cidr-block 10.0.0.0/16 --region $AWS_REGION
