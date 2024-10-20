@@ -32,4 +32,4 @@ workflows:
   create-vpc-workflow:
     jobs:
       - create-vpc:
-          context: región
+          context: region
