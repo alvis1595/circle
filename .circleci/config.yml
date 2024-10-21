@@ -20,8 +20,8 @@ jobs:
       - run:
           name: Deploy VPC using script
           command: |
-            chmod +x ./scripts/deploy.sh
-            ./scripts/deploy.sh templates/vpc.yml my-vpc
+            chmod +x ./scripts/deply.sh
+            ./scripts/deply.sh templates/VPC.yml my-vpc
 
 workflows:
   version: 2
