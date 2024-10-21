@@ -4,35 +4,32 @@ executors:
   default:
     docker:
       - image: circleci/python:3.8
+    working_directory: ~/workspace
 
 jobs:
-  create-vpc:
+  deploy-vpc:
     executor: default
     steps:
       - checkout
       - run:
-          name: Verificar variables de entorno
+          name: Install AWS CLI
           command: |
-            echo "AWS_REGION: $AWS_REGION"
-            echo "AWS_ACCESS_KEY_ID: $AWS_ACCESS_KEY_ID"
-            echo "AWS_SECRET_ACCESS_KEY: $AWS_SECRET_ACCESS_KEY"
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
       - run:
-          name: Instalar AWS CLI
+          name: Deploy VPC using script
           command: |
-            sudo apt-get update
-            sudo apt-get install -y awscli
-      - run:
-          name: Crear una VPC en AWS
-          command: |
-            aws ec2 create-vpc --cidr-block 10.0.0.0/16 --region $AWS_REGION
-            #nueva
-            #OTRA
+            chmod +x ./scripts/deploy.sh
+            ./scripts/deploy.sh templates/vpc.yml my-vpc
+
 workflows:
   version: 2
-  create-vpc-workflow:
+  vpc-deploy:
     jobs:
-      - create-vpc:
+      - deploy-vpc:
           context: 
             - region
             - idaws
             - clavaws
+
