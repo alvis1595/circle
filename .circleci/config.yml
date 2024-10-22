@@ -7,7 +7,7 @@ executors:
     working_directory: ~/workspace
 
 jobs:
-  deploy-vpc2:
+  deploy-vpc:
     executor: default
     steps:
       - checkout
@@ -21,13 +21,13 @@ jobs:
           name: Deploy VPC using script
           command: |
             chmod +x ./scripts/deply.sh
-            ./scripts/deply.sh templates/VPC2.yml miNuevavpc
+            ./scripts/deply.sh templates/VPC.yml MiVPC
 
 workflows:
   version: 2
   vpc-deploy:
     jobs:
-      - deploy-vpc2:
+      - deploy-vpc:
           context: 
             - region
             - idaws
