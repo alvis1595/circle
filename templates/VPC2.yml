@@ -1,0 +1,92 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'VPC con 2 Subnets Públicas, 2 Subnets Privadas, Internet Gateway y NAT Gateway'
+
+Resources:
+  # VPC
+  MiNuevaVPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: "{{resolve:ssm:/miapp2/vpc/cidr}}"
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: MiNuevaVPC
+
+  # Internet Gateway
+  MiNuevoInternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: MiNuevoInternetGateway
+
+  MiNuevaVPCGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref MiNuevaVPC
+      InternetGatewayId: !Ref MiNuevoInternetGateway
+
+  # NAT Gateway
+  MiNuevoElasticIP:
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+
+  MiNuevoNatGateway:
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !GetAtt MiNuevoElasticIP.AllocationId
+      SubnetId: !Ref MiNuevaPublicSubnet1
+      Tags:
+        - Key: Name
+          Value: MiNuevoNatGateway
+
+  # Public Subnets
+  MiNuevaPublicSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MiNuevaVPC
+      CidrBlock: "{{resolve:ssm:/miapp2/vpc/cidr-public-subnet1}}"
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: MiNuevaPublicSubnet1
+
+  MiNuevaPublicSubnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MiNuevaVPC
+      CidrBlock: "{{resolve:ssm:/miapp2/vpc/cidr-public-subnet2}}"
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: MiNuevaPublicSubnet2
+
+  # Private Subnets
+  MiNuevaPrivateSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MiNuevaVPC
+      CidrBlock: "{{resolve:ssm:/miapp2/vpc/cidr-private-subnet1}}"
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: MiNuevaPrivateSubnet1
+
+  MiNuevaPrivateSubnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MiNuevaVPC
+      CidrBlock: "{{resolve:ssm:/miapp2/vpc/cidr-private-subnet2}}"
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: MiNuevaPrivateSubnet2
+
+Outputs:
+  VPCId:
+    Description: 'VPC Id'
+    Value: !Ref MiNuevaVPC
