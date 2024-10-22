@@ -21,7 +21,7 @@ jobs:
           name: Deploy VPC using script
           command: |
             chmod +x ./scripts/deply.sh
-            ./scripts/deply.sh templates/VPC.yml miNuevavpc
+            ./scripts/deply.sh templates/VPC2.yml miNuevavpc
 
 workflows:
   version: 2
