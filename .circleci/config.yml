@@ -21,7 +21,7 @@ jobs:
           name: Deploy First VPC using script
           command: |
             chmod +x ./scripts/deply.sh
-            ./scripts/deply.sh templates/VPC1.yml VPC1
+            ./scripts/deply.sh templates/VPC.yml VPC
 
   deploy-vpc-2:
     executor: default
