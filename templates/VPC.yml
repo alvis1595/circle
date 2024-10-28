@@ -90,3 +90,5 @@ Outputs:
   VPCId:
     Description: 'VPC Id'
     Value: !Ref MiVPC
+    Export:
+      Name: MiVPC

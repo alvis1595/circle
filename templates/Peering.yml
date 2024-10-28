@@ -1,0 +1,35 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'Peering entre MiVPC y MiNuevaVPC'
+
+Resources:
+  # VPC Peering Connection
+  VPCPeeringConnection:
+    Type: 'AWS::EC2::VPCPeeringConnection'
+    Properties:
+      VpcId: !ImportValue MiVPC  # La VPC de origen (debes exportar el ID de la VPC en la plantilla original usando Outputs)
+      PeerVpcId: !ImportValue MiNuevaVPC  # La VPC de destino
+      PeerRegion: !Ref "AWS::Region"
+      Tags:
+        - Key: Name
+          Value: VPCPeeringMiVPC_MiNuevaVPC
+
+  # Ruta en MiVPC hacia MiNuevaVPC
+  MiVPCRouteTable:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref MiVPCRouteTableId  # Asume que MiVPCRouteTableId está definido
+      DestinationCidrBlock: "{{resolve:ssm:/miapp2/vpc/cidr}}"
+      VpcPeeringConnectionId: !Ref VPCPeeringConnection
+
+  # Ruta en MiNuevaVPC hacia MiVPC
+  MiNuevaVPCRouteTable:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref MiNuevaVPCRouteTableId  # Asume que MiNuevaVPCRouteTableId está definido
+      DestinationCidrBlock: "{{resolve:ssm:/miapp/vpc/cidr}}"
+      VpcPeeringConnectionId: !Ref VPCPeeringConnection
+
+Outputs:
+  VPCPeeringConnectionId:
+    Description: 'ID de la conexión de Peering'
+    Value: !Ref VPCPeeringConnection

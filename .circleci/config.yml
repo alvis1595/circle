@@ -7,7 +7,7 @@ executors:
     working_directory: ~/workspace
 
 jobs:
-  deploy-vpc:
+  deploy-peering:
     executor: default
     steps:
       - checkout
@@ -21,13 +21,13 @@ jobs:
           name: Deploy VPC using script
           command: |
             chmod +x ./scripts/deply.sh
-            ./scripts/deply.sh templates/VPC.yml MiVPC
+            ./scripts/deply.sh templates/Peering.yml MiVPC
 
 workflows:
   version: 2
   vpc-deploy:
     jobs:
-      - deploy-vpc:
+      - deploy-peering:
           context: 
             - region
             - idaws
