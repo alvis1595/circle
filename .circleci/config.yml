@@ -7,6 +7,38 @@ executors:
     working_directory: ~/workspace
 
 jobs:
+  deploy-vpc-1:
+    executor: default
+    steps:
+      - checkout
+      - run:
+          name: Install AWS CLI
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Deploy First VPC using script
+          command: |
+            chmod +x ./scripts/deploy.sh
+            ./scripts/deploy.sh templates/VPC1.yml VPC1
+
+  deploy-vpc-2:
+    executor: default
+    steps:
+      - checkout
+      - run:
+          name: Install AWS CLI
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Deploy Second VPC using script
+          command: |
+            chmod +x ./scripts/deploy.sh
+            ./scripts/deploy.sh templates/VPC2.yml VPC2
+
   deploy-peering:
     executor: default
     steps:
@@ -18,18 +50,30 @@ jobs:
             unzip awscliv2.zip
             sudo ./aws/install
       - run:
-          name: Deploy VPC using script
+          name: Deploy VPC Peering using script
           command: |
-            chmod +x ./scripts/deply.sh
-            ./scripts/deply.sh templates/Peering.yml MiVPC
+            chmod +x ./scripts/deploy.sh
+            ./scripts/deploy.sh templates/Peering.yml MiVPC
 
 workflows:
   version: 2
   vpc-deploy:
     jobs:
-      - deploy-peering:
+      - deploy-vpc-1:
           context: 
             - region
             - idaws
             - clavaws
-
+      - deploy-vpc-2:
+          context: 
+            - region
+            - idaws
+            - clavaws
+      - deploy-peering:
+          requires:
+            - deploy-vpc-1
+            - deploy-vpc-2
+          context: 
+            - region
+            - idaws
+            - clavaws
