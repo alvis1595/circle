@@ -88,11 +88,11 @@ Resources:
 
 Outputs:
   VPCId:
-    Description: 'VPC Id'
+    Description: 'VPC Id 2'
     Value: !Ref MiNuevaVPC
     Export:
       MiNuevaVPC
-      
+
     MiNuevaVPCRouteTableId:
     Description: 'ID de la tabla de rutas de MiNuevaVPC'
     Value: !Ref MiNuevaVPCRouteTable
