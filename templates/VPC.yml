@@ -92,3 +92,9 @@ Outputs:
     Value: !Ref MiVPC
     Export:
       Name: MiVPC
+
+  MiVPCRouteTableId:
+    Description: 'ID de la tabla de rutas de MiVPC'
+    Value: !Ref MiVPCRouteTable
+    Export:
+      Name: MiVPCRouteTableId
