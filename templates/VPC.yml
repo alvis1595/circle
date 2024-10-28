@@ -86,6 +86,34 @@ Resources:
         - Key: Name
           Value: MiPrivateSubnet2
 
+  # Route Table for Public Subnets
+  MiVPCRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref MiVPC
+      Tags:
+        - Key: Name
+          Value: MiVPCRouteTable
+
+  MiPublicRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref MiVPCRouteTable
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref MiInternetGateway
+
+  MiPublicSubnet1RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref MiPublicSubnet1
+      RouteTableId: !Ref MiVPCRouteTable
+
+  MiPublicSubnet2RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref MiPublicSubnet2
+      RouteTableId: !Ref MiVPCRouteTable
+
 Outputs:
   VPCId:
     Description: 'VPC Id'

@@ -86,14 +86,42 @@ Resources:
         - Key: Name
           Value: MiNuevaPrivateSubnet2
 
+  # Route Table for Nueva VPC
+  MiNuevaVPCRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref MiNuevaVPC
+      Tags:
+        - Key: Name
+          Value: MiNuevaVPCRouteTable
+
+  MiNuevaPublicRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref MiNuevaVPCRouteTable
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref MiNuevoInternetGateway
+
+  MiNuevaPublicSubnet1RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref MiNuevaPublicSubnet1
+      RouteTableId: !Ref MiNuevaVPCRouteTable
+
+  MiNuevaPublicSubnet2RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref MiNuevaPublicSubnet2
+      RouteTableId: !Ref MiNuevaVPCRouteTable
+
 Outputs:
-  VPCId:
-    Description: 'VPC Id 2'
+  NuevaVPCId:
+    Description: 'ID de la nueva VPC'
     Value: !Ref MiNuevaVPC
     Export:
-      MiNuevaVPC
+      Name: MiNuevaVPC
 
-    MiNuevaVPCRouteTableId:
+  MiNuevaVPCRouteTableId:
     Description: 'ID de la tabla de rutas de MiNuevaVPC'
     Value: !Ref MiNuevaVPCRouteTable
     Export:
