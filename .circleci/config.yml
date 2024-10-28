@@ -20,8 +20,8 @@ jobs:
       - run:
           name: Deploy First VPC using script
           command: |
-            chmod +x ./scripts/deploy.sh
-            ./scripts/deploy.sh templates/VPC1.yml VPC1
+            chmod +x ./scripts/deply.sh
+            ./scripts/deply.sh templates/VPC1.yml VPC1
 
   deploy-vpc-2:
     executor: default
@@ -36,8 +36,8 @@ jobs:
       - run:
           name: Deploy Second VPC using script
           command: |
-            chmod +x ./scripts/deploy.sh
-            ./scripts/deploy.sh templates/VPC2.yml VPC2
+            chmod +x ./scripts/deply.sh
+            ./scripts/deply.sh templates/VPC2.yml VPC2
 
   deploy-peering:
     executor: default
@@ -52,8 +52,8 @@ jobs:
       - run:
           name: Deploy VPC Peering using script
           command: |
-            chmod +x ./scripts/deploy.sh
-            ./scripts/deploy.sh templates/Peering.yml MiVPC
+            chmod +x ./scripts/deply.sh
+            ./scripts/deply.sh templates/Peering.yml MiVPC
 
 workflows:
   version: 2
