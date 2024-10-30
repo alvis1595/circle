@@ -21,7 +21,7 @@ jobs:
           name: Deploy First VPC using script
           command: |
             chmod +x ./scripts/deply.sh
-            ./scripts/deply.sh templates/VPC.yml VPC
+            ./scripts/deply.sh templates/VPC.yml VPC my-vpc-stack-1
 
   deploy-vpc-2:
     executor: default
@@ -37,7 +37,8 @@ jobs:
           name: Deploy Second VPC using script
           command: |
             chmod +x ./scripts/deply.sh
-            ./scripts/deply.sh templates/VPC2.yml VPC2
+            ./scripts/deply.sh templates/VPC2.yml VPC2 my-vpc-stack-2
+
 
   deploy-peering:
     executor: default

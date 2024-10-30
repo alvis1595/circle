@@ -3,11 +3,12 @@
 # Parámetros
 readonly templateFilePath="$1"
 readonly resource="$2"
-readonly infraName="my-vpc-stack"
+readonly infraName="$3"
 
 echo " ===> Desplegando VPC usando AWS CloudFormation <====="
 echo "AWS CloudFormation template: $templateFilePath"
 echo "Recurso: $resource"
+echo "Nombre de la pila: $infraName"
 
 # Despliegue con AWS CloudFormation
 aws cloudformation deploy --stack-name "$infraName" --template-file "$templateFilePath" \
