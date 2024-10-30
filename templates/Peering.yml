@@ -6,8 +6,8 @@ Resources:
   VPCPeeringConnection:
     Type: 'AWS::EC2::VPCPeeringConnection'
     Properties:
-      VpcId: !ImportValue MiVPC  # La VPC de origen (debes exportar el ID de la VPC en la plantilla original usando Outputs)
-      PeerVpcId: !ImportValue MiNuevaVPC  # La VPC de destino
+      VpcId: !ImportValue MiVPC               # Importa el ID de MiVPC
+      PeerVpcId: !ImportValue MiNuevaVPC       # Importa el ID de MiNuevaVPC
       PeerRegion: !Ref "AWS::Region"
       Tags:
         - Key: Name
@@ -17,16 +17,16 @@ Resources:
   MiVPCRouteTable:
     Type: 'AWS::EC2::Route'
     Properties:
-      RouteTableId: !Ref MiVPCRouteTableId  # Asume que MiVPCRouteTableId está definido
-      DestinationCidrBlock: "{{resolve:ssm:/miapp2/vpc/cidr}}"
+      RouteTableId: !ImportValue MiVPCRouteTableId         # Importa el ID de la tabla de rutas de MiVPC
+      DestinationCidrBlock: "{{resolve:ssm:/miapp2/vpc/cidr}}" # CIDR de MiNuevaVPC
       VpcPeeringConnectionId: !Ref VPCPeeringConnection
 
   # Ruta en MiNuevaVPC hacia MiVPC
   MiNuevaVPCRouteTable:
     Type: 'AWS::EC2::Route'
     Properties:
-      RouteTableId: !Ref MiNuevaVPCRouteTableId  # Asume que MiNuevaVPCRouteTableId está definido
-      DestinationCidrBlock: "{{resolve:ssm:/miapp/vpc/cidr}}"
+      RouteTableId: !ImportValue MiNuevaVPCRouteTableId    # Importa el ID de la tabla de rutas de MiNuevaVPC
+      DestinationCidrBlock: "{{resolve:ssm:/miapp/vpc/cidr}}" # CIDR de MiVPC
       VpcPeeringConnectionId: !Ref VPCPeeringConnection
 
 Outputs:
