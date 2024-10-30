@@ -54,7 +54,7 @@ jobs:
           name: Deploy VPC Peering using script
           command: |
             chmod +x ./scripts/deply.sh
-            ./scripts/deply.sh templates/Peering.yml MiVPC
+            ./scripts/deply.sh templates/Peering.yml peering deploy-peering
 
 workflows:
   version: 2
