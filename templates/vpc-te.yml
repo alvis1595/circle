@@ -6,7 +6,7 @@ Resources:
   MiVPC:
     Type: 'AWS::EC2::VPC'
     Properties:
-      CidrBlock: "{{variables}}"
+      CidrBlock: "{{varibles}}"
       EnableDnsSupport: true
       EnableDnsHostnames: true
       Tags:
