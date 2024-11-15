@@ -51,7 +51,7 @@ jobs:
             sudo ./aws/install
       - run:
           name: Reemplazar CIDR dinámico
-          command: sed -i "s/{{varibles}}/$varibles/" templates/vpc-te.yml
+          command: sed -i "s|{{varibles}}|$varibles|" templates/vpc-te.yml
       - run:
           name: Deploy First VPC using script
           command: |
