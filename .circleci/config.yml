@@ -50,6 +50,9 @@ jobs:
             unzip awscliv2.zip
             sudo ./aws/install
       - run:
+          name: Reemplazar CIDR dinámico
+          command: sed -i "s/{{variables}}/$variables/" templates/vpc-te.yml
+      - run:
           name: Deploy First VPC using script
           command: |
             chmod +x ./scripts/deply.sh
