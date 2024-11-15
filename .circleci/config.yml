@@ -39,6 +39,23 @@ jobs:
             chmod +x ./scripts/deply.sh
             ./scripts/deply.sh templates/VPC2.yml VPC2 my-vpc-stack-2
 
+  deploy-vpc-3:
+    executor: default
+    steps:
+      - checkout
+      - run:
+          name: Install AWS CLI
+          command: |
+            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
+            unzip awscliv2.zip
+            sudo ./aws/install
+      - run:
+          name: Deploy First VPC using script
+          command: |
+            chmod +x ./scripts/deply.sh
+            ./scripts/deply.sh templates/vpc-te.yml VPC my-vpc-stack-3
+
+
 
   deploy-peering:
     executor: default
@@ -60,7 +77,7 @@ workflows:
   version: 2
   vpc-deploy:
     jobs:
-      - deploy-vpc-1:
+      - deploy-vpc-3:
           context: 
             - region
             - idaws
