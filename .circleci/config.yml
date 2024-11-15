@@ -61,22 +61,31 @@ workflows:
   vpc-deploy:
     jobs:
       - deploy-vpc-1:
-          requires:
-            - deploy-vpc-2
           context: 
             - region
             - idaws
             - clavaws
-      - deploy-vpc-2:
-          context: 
-            - region
-            - idaws
-            - clavaws
-      - deploy-peering:
-          requires:
-            - deploy-vpc-1
-            - deploy-vpc-2
-          context: 
-            - region
-            - idaws
-            - clavaws
+            - nueva
+
+#  vpc-deploy:
+#    jobs:
+#      - deploy-vpc-1:
+#          requires:
+#            - deploy-vpc-2
+#          context: 
+#            - region
+#            - idaws
+#            - clavaws
+#      - deploy-vpc-2:
+#          context: 
+#            - region
+#            - idaws
+#            - clavaws
+#      - deploy-peering:
+#          requires:
+#            - deploy-vpc-1
+#            - deploy-vpc-2
+#          context: 
+#            - region
+#            - idaws
+#            - clavaws

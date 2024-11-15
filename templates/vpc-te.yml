@@ -1,0 +1,128 @@
+AWSTemplateFormatVersion: '2010-09-09'
+Description: 'VPC con 2 Subnets Públicas, 2 Subnets Privadas, Internet Gateway y NAT Gateway'
+
+Resources:
+  # VPC
+  MiVPC:
+    Type: 'AWS::EC2::VPC'
+    Properties:
+      CidrBlock: $variables
+      EnableDnsSupport: true
+      EnableDnsHostnames: true
+      Tags:
+        - Key: Name
+          Value: MiVPC
+
+  # Internet Gateway
+  MiInternetGateway:
+    Type: 'AWS::EC2::InternetGateway'
+    Properties:
+      Tags:
+        - Key: Name
+          Value: MiInternetGateway
+
+  MiVPCGatewayAttachment:
+    Type: 'AWS::EC2::VPCGatewayAttachment'
+    Properties:
+      VpcId: !Ref MiVPC
+      InternetGatewayId: !Ref MiInternetGateway
+
+  # NAT Gateway
+  MiElasticIP:
+    Type: 'AWS::EC2::EIP'
+    Properties:
+      Domain: vpc
+
+  MiNatGateway:
+    Type: 'AWS::EC2::NatGateway'
+    Properties:
+      AllocationId: !GetAtt MiElasticIP.AllocationId
+      SubnetId: !Ref MiPublicSubnet1
+      Tags:
+        - Key: Name
+          Value: MiNatGateway
+
+  # Public Subnets
+  MiPublicSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MiVPC
+      CidrBlock: "{{resolve:ssm:/miapp/vpc/cidr-public-subnet1}}"
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: MiPublicSubnet1
+
+  MiPublicSubnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MiVPC
+      CidrBlock: "{{resolve:ssm:/miapp/vpc/cidr-public-subnet2}}"
+      MapPublicIpOnLaunch: true
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: MiPublicSubnet2
+
+  # Private Subnets
+  MiPrivateSubnet1:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MiVPC
+      CidrBlock: "{{resolve:ssm:/miapp/vpc/cidr-private-subnet1}}"
+      AvailabilityZone: !Select [0, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: MiPrivateSubnet1
+
+  MiPrivateSubnet2:
+    Type: 'AWS::EC2::Subnet'
+    Properties:
+      VpcId: !Ref MiVPC
+      CidrBlock: "{{resolve:ssm:/miapp/vpc/cidr-private-subnet2}}"
+      AvailabilityZone: !Select [1, !GetAZs '']
+      Tags:
+        - Key: Name
+          Value: MiPrivateSubnet2
+
+  # Route Table for Public Subnets
+  MiVPCRouteTable:
+    Type: 'AWS::EC2::RouteTable'
+    Properties:
+      VpcId: !Ref MiVPC
+      Tags:
+        - Key: Name
+          Value: MiVPCRouteTable
+
+  MiPublicRoute:
+    Type: 'AWS::EC2::Route'
+    Properties:
+      RouteTableId: !Ref MiVPCRouteTable
+      DestinationCidrBlock: '0.0.0.0/0'
+      GatewayId: !Ref MiInternetGateway
+
+  MiPublicSubnet1RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref MiPublicSubnet1
+      RouteTableId: !Ref MiVPCRouteTable
+
+  MiPublicSubnet2RouteTableAssociation:
+    Type: 'AWS::EC2::SubnetRouteTableAssociation'
+    Properties:
+      SubnetId: !Ref MiPublicSubnet2
+      RouteTableId: !Ref MiVPCRouteTable
+
+Outputs:
+  VPCId:
+    Description: 'VPC Id'
+    Value: !Ref MiVPC
+    Export:
+      Name: MiVPC
+
+  MiVPCRouteTableId:
+    Description: 'ID de la tabla de rutas de MiVPC'
+    Value: !Ref MiVPCRouteTable
+    Export:
+      Name: MiVPCRouteTableId
