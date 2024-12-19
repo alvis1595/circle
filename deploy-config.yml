@@ -1,0 +1,10 @@
+deployments:
+  - template: iam/BancoGeneral-PermissionSet-operaciones1.yaml
+    resource: IAM-operaciones
+    region: "sa-east-1"
+    oidc_profile: "OIDC-OPERACIONES"
+
+  - template: iam/BancoGeneral-PermissionSet-operaciones2.yaml
+    resource: IAM-operaciones
+    region: "sa-east-1"
+    oidc_profile: "OIDC-OPERACIONES"

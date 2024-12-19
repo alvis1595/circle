@@ -1,111 +1,31 @@
 version: 2.1
+orbs:
+  aws-cli: circleci/aws-cli@4.0.0
 
 executors:
-  default:
-    docker:
-      - image: circleci/python:3.8
-    working_directory: ~/workspace
+  arm-executor:
+    machine:
+      image: ubuntu-2004:current
+    resource_class: arm.medium
 
 jobs:
-  deploy-vpc-1:
-    executor: default
+  deploy-dynamic:
+    executor: arm-executor
     steps:
       - checkout
       - run:
-          name: Install AWS CLI
+          name: Install Dependencies
           command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
+            sudo apt-get install -y jq yq
+      - aws-cli/setup:
+          profile_name: "default"  # Se usa un perfil temporal antes de que el script configure dinámicamente.
       - run:
-          name: Deploy First VPC using script
+          name: Parse and Deploy Configurations
           command: |
-            chmod +x ./scripts/deply.sh
-            ./scripts/deply.sh templates/VPC.yml VPC my-vpc-stack-1
-
-  deploy-vpc-2:
-    executor: default
-    steps:
-      - checkout
-      - run:
-          name: Install AWS CLI
-          command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-      - run:
-          name: Deploy Second VPC using script
-          command: |
-            chmod +x ./scripts/deply.sh
-            ./scripts/deply.sh templates/VPC2.yml VPC2 my-vpc-stack-2
-
-  deploy-vpc-3:
-    executor: default
-    steps:
-      - checkout
-      - run:
-          name: Install AWS CLI
-          command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-      - run:
-          name: Reemplazar CIDR dinámico
-          command: sed -i "s|{{varibles}}|$varibles|" templates/vpc-te.yml
-      - run:
-          name: Deploy First VPC using script
-          command: |
-            chmod +x ./scripts/deply.sh
-            ./scripts/deply.sh templates/vpc-te.yml VPC my-vpc-stack-3
-
-
-
-  deploy-peering:
-    executor: default
-    steps:
-      - checkout
-      - run:
-          name: Install AWS CLI
-          command: |
-            curl "https://awscli.amazonaws.com/awscli-exe-linux-x86_64.zip" -o "awscliv2.zip"
-            unzip awscliv2.zip
-            sudo ./aws/install
-      - run:
-          name: Deploy VPC Peering using script
-          command: |
-            chmod +x ./scripts/deply.sh
-            ./scripts/deply.sh templates/Peering.yml peering deploy-peering
+            chmod +x ./scripts/parse_deploy_config.sh
+            ./scripts/parse_deploy_config.sh
 
 workflows:
-  version: 2
-  vpc-deploy:
+  iac-compute:
     jobs:
-      - deploy-vpc-3:
-          context: 
-            - region
-            - idaws
-            - clavaws
-            - nueva
-
-#  vpc-deploy:
-#    jobs:
-#      - deploy-vpc-1:
-#          requires:
-#            - deploy-vpc-2
-#          context: 
-#            - region
-#            - idaws
-#            - clavaws
-#      - deploy-vpc-2:
-#          context: 
-#            - region
-#            - idaws
-#            - clavaws
-#      - deploy-peering:
-#          requires:
-#            - deploy-vpc-1
-#            - deploy-vpc-2
-#          context: 
-#            - region
-#            - idaws
-#            - clavaws
+      - deploy-dynamic
