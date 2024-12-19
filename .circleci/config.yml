@@ -5,7 +5,7 @@ orbs:
 executors:
   arm-executor:
     machine:
-      image: ubuntu-2004:current
+      image: cimg/base:stable 
     resource_class: arm.medium
 
 jobs:
