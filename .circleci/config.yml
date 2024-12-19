@@ -5,7 +5,7 @@ orbs:
 executors:
   arm-executor:
     machine:
-      image: cimg/base:stable 
+      image: ubuntu-2004:current
     resource_class: arm.medium
 
 jobs:
@@ -14,9 +14,12 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Install Dependencies
-          command: |
-            sudo apt-get install -y jq yq
+          name: Update apt repositories
+          command: sudo apt-get update
+      - run:
+          name: Install jq and yq
+          command: sudo apt-get install -y jq yq
+
       - aws-cli/setup:
           profile_name: "default"  # Se usa un perfil temporal antes de que el script configure dinámicamente.
       - run:
