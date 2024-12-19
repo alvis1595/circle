@@ -14,11 +14,13 @@ jobs:
     steps:
       - checkout
       - run:
-          name: Update apt repositories
-          command: sudo apt-get update
+          name: Install jq
+          command: sudo apt-get install -y jq
       - run:
-          name: Install jq and yq
-          command: sudo apt-get install -y jq yq
+          name: Install yq
+          command: |
+            sudo wget https://github.com/mikefarah/yq/releases/download/v4.30.5/yq_linux_amd64 -O /usr/bin/yq
+            sudo chmod +x /usr/bin/yq
 
       - aws-cli/setup:
           profile_name: "default"  # Se usa un perfil temporal antes de que el script configure dinámicamente.
